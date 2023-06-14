@@ -95,6 +95,17 @@ const connect = async () => {
 const matchEvent = (ev) => {
     switch (ev.kind) {
         case 1: // ポスト
+            // 対象イベントがbotの起動後より新しいイベントかどうか
+            if (!time.isNewEvent(ev.created_at)) {
+                return false;
+            }
+
+            // 対象先へのイベントの送信から一定時間経過しているかどうか
+            if (!time.passedReplyCoolTime(ev.pubkey)) {
+                return false;
+            }
+
+            return true;
         case 7: // メンション
             // 対象イベントがbotの起動後より新しいイベントかどうか
             if (!time.isNewEvent(ev.created_at)) {

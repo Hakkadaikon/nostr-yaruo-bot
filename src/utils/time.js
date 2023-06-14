@@ -25,7 +25,7 @@ const initTime = currUnixTime();
  */
 const passedReplyCoolTime = (id) => {
     const lastReplyTime = lastReplyTimePerId.get(id);
-    if (!lastReplyTime) {
+    if (lastReplyTime === undefined) {
         lastReplyTimePerId.set(id, now);
         return true;
     }
