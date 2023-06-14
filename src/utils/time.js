@@ -26,11 +26,13 @@ const initTime = currUnixTime();
 const passedReplyCoolTime = (id) => {
     const lastReplyTime = lastReplyTimePerId.get(id);
     if (!lastReplyTime) {
+        lastReplyTimePerId.set(id, now);
         return true;
     }
 
     const now = currUnixTime();
     if (now - lastReplyTime > COOL_TIME_DUR_SEC) {
+        lastReplyTimePerId.set(id, now);
         return true;
     }
 
