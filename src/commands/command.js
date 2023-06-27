@@ -44,7 +44,11 @@ const cmdFab = (match, ev) => {
 const cmdNews = (match, ev) => {
   news.getGameNews((news) => {
     const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
-    latestNews = news[news.length - 1];
+    const arrayMax = news.length - 1;
+    const arrayMin = 0;
+    const arrayNo =
+      Math.floor(Math.random() * (arrayMax + 1 - arrayMin)) + arrayMin;
+    latestNews = news[arrayNo];
     openai.send((str) => {
       const replyStr =
         str +
