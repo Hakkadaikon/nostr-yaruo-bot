@@ -47,12 +47,12 @@ const routeMap = [
 /**
  * @summary GPT-3.5による応答を返信する
  */
-const cmdOpenAI = async (content) => {
-  await openai.send((str) => {
+const cmdOpenAI = (ev) => {
+  openai.send((str) => {
     logger.debug("prompt reply: " + str);
     const reply = event.create("reply", str, ev);
     relay.publish(reply);
-  }, config.BOT_INITIAL_PROMPT + content);
+  }, config.BOT_INITIAL_PROMPT + ev.content);
 };
 
 /**
@@ -77,7 +77,7 @@ const callback = (ev) => {
       }
 
       // コマンドにマッチしなかった場合は、GPT-3.5による応答を返信する
-      cmdOpenAI(ev.content);
+      cmdOpenAI(ev);
       break;
   }
 };
