@@ -51,8 +51,8 @@ const cmdFab = (match, ev) => {
     );
     relay.publish(reply);
 
-    const mention = event.create("mention", "+", ev);
-    relay.publish(mention);
+    const reaction = event.create("reaction", "+", ev);
+    relay.publish(reaction);
 };
 
 const routeMap = [
