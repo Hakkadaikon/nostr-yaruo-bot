@@ -24,13 +24,13 @@ const initTime = currUnixTime();
  * @summary 返信してから一定時間超えたかを確認する
  */
 const passedReplyCoolTime = (id) => {
+  const now = currUnixTime();
   const lastReplyTime = lastReplyTimePerId.get(id);
   if (lastReplyTime === undefined) {
     lastReplyTimePerId.set(id, now);
     return true;
   }
 
-  const now = currUnixTime();
   if (now - lastReplyTime > COOL_TIME_DUR_SEC) {
     lastReplyTimePerId.set(id, now);
     return true;

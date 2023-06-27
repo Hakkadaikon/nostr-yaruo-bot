@@ -93,18 +93,22 @@ const connect = async () => {
  * @summary 購読対象のイベントかどうかを判定する
  */
 const matchEvent = (ev) => {
+  //logger.debug(JSON.stringify(ev));
   switch (ev.kind) {
     case 1: // ポスト
       // 対象イベントがbotの起動後より新しいイベントかどうか
       if (!time.isNewEvent(ev.created_at)) {
+        //logger.debug("Not new event.");
         return false;
       }
 
       // 対象先へのイベントの送信から一定時間経過しているかどうか
       if (!time.passedReplyCoolTime(ev.pubkey)) {
+        //logger.debug("Not passed reply cool time.");
         return false;
       }
 
+      //logger.debug("pass.");
       return true;
     case 7: // メンション
       // 対象イベントがbotの起動後より新しいイベントかどうか
@@ -143,11 +147,9 @@ const subscribe = (callback) => {
   // 購読開始
   const sub = relay.sub(getFilter());
   sub.on("event", (ev) => {
-    if (!matchEvent(ev)) {
-      return;
+    if (matchEvent(ev)) {
+      callback(ev);
     }
-
-    callback(ev);
   });
 };
 
