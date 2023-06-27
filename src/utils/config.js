@@ -34,6 +34,6 @@ const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大�
 Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
 
 module.exports = {
-    BOT_PRIVATE_KEY_HEX,
-    BOT_INITIAL_PROMPT,
+  BOT_PRIVATE_KEY_HEX,
+  BOT_INITIAL_PROMPT,
 };
