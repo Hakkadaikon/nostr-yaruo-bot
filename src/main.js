@@ -54,6 +54,8 @@ const main = async () => {
   // イベントに秘密鍵を設定
   event.init(config.BOT_PRIVATE_KEY_HEX);
 
+  command.init(relay, event);
+
   // 起動メッセージ投稿
   const runPost = event.create("post", "おっきしたお。");
   relay.publish(runPost);

@@ -1,6 +1,15 @@
 const logger = require("../utils/logger.js");
-const event = require("../actions/event.js");
-const relay = require("../actions/relay.js");
+
+relay = null;
+event = null;
+
+/**
+ * @summary リレーとイベントを設定
+ */
+const init = (relay, event) => {
+  this.relay = relay;
+  this.event = event;
+};
 
 /**
  * @summary 使い方を表示する
@@ -41,5 +50,6 @@ const routeMap = [
 ];
 
 module.exports = {
+  init,
   routeMap,
 };
