@@ -2,6 +2,11 @@
 require("dotenv").config();
 
 /**
+ * @summary OpenAI APIにアクセスするためのキー
+ */
+const BOT_OPENAI_KEY = process.env.OPENAI_API_KEY;
+
+/**
  * @summary Nostrに投稿するための、BOTの秘密鍵
  */
 const BOT_PRIVATE_KEY_HEX = process.env.BOT_PRIVATE_KEY_HEX;
@@ -36,4 +41,5 @@ Userが次の様にやる夫に質問するので、あなたはやる夫とし�
 module.exports = {
   BOT_PRIVATE_KEY_HEX,
   BOT_INITIAL_PROMPT,
+  BOT_OPENAI_KEY,
 };
