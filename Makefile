@@ -28,5 +28,5 @@ install:
 	yarn install
 
 run: 
-	yarn run build
+	node src/main.js
 
