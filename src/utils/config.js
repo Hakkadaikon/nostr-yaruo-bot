@@ -12,6 +12,11 @@ const BOT_OPENAI_KEY = process.env.OPENAI_API_KEY;
 const BOT_PRIVATE_KEY_HEX = process.env.BOT_PRIVATE_KEY_HEX;
 
 /**
+ * @summary ニュースを投稿するためのAPIキー
+ */
+const BOT_NEWS_API_KEY = process.env.BOT_NEWS_API_KEY;
+
+/**
  * @summary ChatGPT APIに与える、BOTの初期プロンプト
  */
 const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大好きなニート、やる夫のロールプレイを行います。
@@ -38,8 +43,15 @@ const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大�
 * おまい、それはXXだお。
 Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
 
+/**
+ * ニュース要約用のプロンプト
+ */
+const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3行程度でコメントして下さい。 : `;
+
 module.exports = {
   BOT_PRIVATE_KEY_HEX,
+  BOT_NEWS_API_KEY,
   BOT_INITIAL_PROMPT,
+  BOT_NEWS_PROMPT,
   BOT_OPENAI_KEY,
 };
