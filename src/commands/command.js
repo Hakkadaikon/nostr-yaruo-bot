@@ -46,21 +46,39 @@ const getNewsContent = (newsurl, callback) => {
   const { JSDOM } = require("jsdom");
   const { Readability } = require("@mozilla/readability");
 
-  axios.get(newsurl).then(function (r2) {
-    let dom = new JSDOM(r2.data, { url: newsurl });
-    let article = new Readability(dom.window.document).parse();
-    //logger.debug("document:" + JSON.stringify(dom.window.document));
-    //logger.debug("article:" + article.textContent);
-    callback(article.textContent);
-  });
+  axios
+    .get(newsurl)
+    .then(function (r2) {
+      let dom = new JSDOM(r2.data, { url: newsurl });
+      let article = new Readability(dom.window.document).parse();
+      //logger.debug("document:" + JSON.stringify(dom.window.document));
+      //logger.debug("article:" + article.textContent);
+      callback(article.textContent);
+    })
+    .catch(function (error) {
+      logger.error("Failed news summary error.");
+      if (error.response) {
+        logger.error("Error response.");
+        logger.error("- data   :" + error.response.data);
+        logger.error("- status :" + error.response.status);
+        logger.error("- headers:" + error.response.headers);
+      } else if (error.request) {
+        logger.error("Not response.");
+        logger.error("- request:" + error.request);
+      } else {
+        logger.error("Other error.");
+        logger.error("- message:" + error.message);
+      }
+    });
 };
 
-/**
- * @summary 最新ニュースの感想を返信する
- */
-const cmdNews = (match, ev) => {
+const cmdNews = (callback) => {
   news.getGameNews((news) => {
     const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
+    if (news.length == 0) {
+      return;
+    }
+
     const arrayMax = news.length - 1;
     const arrayMin = 0;
     const arrayNo =
@@ -71,7 +89,7 @@ const cmdNews = (match, ev) => {
     getNewsContent(latestNews["url"], (content) => {
       // 記事の内容から要約を取得
       openai.send((str) => {
-        const replyStr =
+        const responseStr =
           str +
           "\n\n" +
           "タイトル：[" +
@@ -80,14 +98,32 @@ const cmdNews = (match, ev) => {
           "概要：\n" +
           latestNews["description"] +
           "\n" +
-          "URL：" +
+          "URL：\n" +
           latestNews["url"];
 
-        logger.debug("prompt reply: " + replyStr);
-        const reply = event.create("reply", replyStr, ev);
-        relay.publish(reply);
+        //logger.debug("response: " + responseStr);
+        callback(responseStr);
+        //const reply = event.create("reply", replyStr, ev);
+        //relay.publish(reply);
       }, prompt + content);
     });
+  });
+};
+
+const cmdNewsPost = () => {
+  cmdNews((str) => {
+    const post = event.create("post", str);
+    relay.publish(post);
+  });
+};
+
+/**
+ * @summary 最新ニュースの感想を返信する
+ */
+const cmdNewsReply = (match, ev) => {
+  cmdNews((str) => {
+    const reply = event.create("reply", str, ev);
+    relay.publish(reply);
   });
 };
 
@@ -97,7 +133,7 @@ const cmdNews = (match, ev) => {
 const routeMap = [
   [/(help|ヘルプ|へるぷ)/g, true, cmdHelp],
   [/(褒め|ほめ|ホメ|称え|たたえ)(ろ|て)/g, true, cmdFab],
-  [/(ニュース|News|NEWS|news)/g, true, cmdNews],
+  [/(ニュース|News|NEWS|news)/g, true, cmdNewsReply],
 ];
 
 /**
@@ -160,6 +196,10 @@ const init = async () => {
   const runPost = event.create("post", "おっきしたお。");
   relay.publish(runPost);
 
+  // 定期的なニュース投稿
+  const cron = require("node-cron");
+  cron.schedule("0,30 * * * *", () => cmdNewsPost());
+
   process.on("SIGINT", () => {
     logger.info("SIGINT");
     const exitPost = event.create("post", "寝るお。(SIGINT)");
@@ -183,6 +223,9 @@ const init = async () => {
 
   // 購読処理
   relay.subscribe(callback);
+
+  // 起動時にニュース投稿
+  cmdNewsPost();
 };
 
 module.exports = {

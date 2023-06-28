@@ -11,10 +11,11 @@ const openai = new OpenAIApi(configuration);
  */
 const send = async (callback, prompt) => {
   const completion = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gpt-3.5-turbo-16k-0613",
+    //model: "gpt-3.5-turbo",
     //model: "gpt-4",
     messages: [{ role: "user", content: prompt }],
-    max_tokens: 150,
+    max_tokens: 300,
   });
 
   // 生成された応答文章をコールバックに渡す
