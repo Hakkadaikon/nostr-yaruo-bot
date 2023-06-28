@@ -39,6 +39,23 @@ const cmdFab = (match, ev) => {
 };
 
 /**
+ * @summary ニュースの内容を取得する
+ */
+const getNewsContent = (newsurl, callback) => {
+  const axios = require("axios");
+  const { JSDOM } = require("jsdom");
+  const { Readability } = require("@mozilla/readability");
+
+  axios.get(newsurl).then(function (r2) {
+    let dom = new JSDOM(r2.data, { url: newsurl });
+    let article = new Readability(dom.window.document).parse();
+    //logger.debug("document:" + JSON.stringify(dom.window.document));
+    //logger.debug("article:" + article.textContent);
+    callback(article.textContent);
+  });
+};
+
+/**
  * @summary 最新ニュースの感想を返信する
  */
 const cmdNews = (match, ev) => {
@@ -49,21 +66,28 @@ const cmdNews = (match, ev) => {
     const arrayNo =
       Math.floor(Math.random() * (arrayMax + 1 - arrayMin)) + arrayMin;
     latestNews = news[arrayNo];
-    openai.send((str) => {
-      const replyStr =
-        str +
-        "\n\n" +
-        "タイトル：" +
-        latestNews["title"] +
-        "\n" +
-        "概要：" +
-        latestNews["description"] +
-        "\n" +
-        latestNews["url"];
-      logger.debug("prompt reply: " + replyStr);
-      const reply = event.create("reply", replyStr, ev);
-      relay.publish(reply);
-    }, prompt + latestNews["description"]);
+
+    // 記事の内容を取得
+    getNewsContent(latestNews["url"], (content) => {
+      // 記事の内容から要約を取得
+      openai.send((str) => {
+        const replyStr =
+          str +
+          "\n\n" +
+          "タイトル：[" +
+          latestNews["title"] +
+          "]\n" +
+          "概要：\n" +
+          latestNews["description"] +
+          "\n" +
+          "URL：" +
+          latestNews["url"];
+
+        logger.debug("prompt reply: " + replyStr);
+        const reply = event.create("reply", replyStr, ev);
+        relay.publish(reply);
+      }, prompt + content);
+    });
   });
 };
 
