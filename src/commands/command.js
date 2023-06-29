@@ -72,6 +72,14 @@ const getNewsContent = (newsurl, callback) => {
     });
 };
 
+/**
+ * @summary 一度配信したニュース情報
+ */
+const newsList = [];
+
+/**
+ * @summary ニュースの内容を取得する
+ */
 const cmdNews = (callback) => {
   news.getGameNews((news) => {
     const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
@@ -79,11 +87,23 @@ const cmdNews = (callback) => {
       return;
     }
 
-    const arrayMax = news.length - 1;
-    const arrayMin = 0;
-    const arrayNo =
-      Math.floor(Math.random() * (arrayMax + 1 - arrayMin)) + arrayMin;
-    latestNews = news[arrayNo];
+    let retlyCount = 0;
+    while (true) {
+      const arrayMax = news.length - 1;
+      const arrayMin = 0;
+      const arrayNo =
+        Math.floor(Math.random() * (arrayMax + 1 - arrayMin)) + arrayMin;
+      latestNews = news[arrayNo];
+
+      if (newsList.includes(latestNews["url"]) && retlyCount < 10) {
+        retlyCount++;
+        continue;
+      }
+
+      // 一度配信したニュース情報を記録
+      newsList.push(latestNews["url"]);
+      break;
+    }
 
     // 記事の内容を取得
     getNewsContent(latestNews["url"], (content) => {
@@ -101,10 +121,7 @@ const cmdNews = (callback) => {
           "URL：\n" +
           latestNews["url"];
 
-        //logger.debug("response: " + responseStr);
         callback(responseStr);
-        //const reply = event.create("reply", replyStr, ev);
-        //relay.publish(reply);
       }, prompt + content);
     });
   });

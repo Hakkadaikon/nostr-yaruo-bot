@@ -9,6 +9,7 @@ const getGameNews = (callback) => {
   newsapi.v2
     .everything({
       q: "ゲーム",
+      sortBy: "publishedAt",
     })
     .then((response) => {
       var news = response.articles;
