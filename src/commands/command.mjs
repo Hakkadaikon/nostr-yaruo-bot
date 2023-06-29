@@ -108,21 +108,46 @@ const cmdNews = (callback) => {
     }
 
     getNewsContent(latestNews["url"], (content) => {
-      openai.send((str) => {
+      const openaiCallback = (str) => {
+        const titleLabel = "タイトル";
+        const descriptionLabel = "概要";
+        const urlLabel = "URL";
+        const outStr = (label, value) => {
+          return label + " :\n" + value + "\n";
+        };
+
         const responseStr =
           str +
           "\n\n" +
-          "タイトル：[" +
-          latestNews["title"] +
-          "]\n" +
-          "概要：\n" +
-          latestNews["description"] +
-          "\n" +
-          "URL：\n" +
-          latestNews["url"];
+          outStr(titleLabel, latestNews["title"]) +
+          outStr(descriptionLabel, latestNews["description"]) +
+          outStr(urlLabel, latestNews["url"]);
 
         callback(responseStr);
-      }, prompt + content);
+      };
+
+      const openaiCheckCallback = (str) => {
+        const ngWords = ["XX/XX", "XXがXX", "XXを参照"];
+        for (let i = 0; i < ngWords.length; i++) {
+          if (str.includes(ngWords[i])) {
+            return false;
+          }
+        }
+
+        openaiCallback(str);
+        return true;
+      };
+
+      let retryCount = 0;
+      const openaiLoopCallback = (prompt) => {
+        openai.send((str) => {
+          logger.debug("retry count : " + retryCount);
+          if (!openaiCheckCallback(str) && retryCount++ < 3) {
+            openaiLoopCallback(str);
+          }
+        }, prompt);
+      };
+      openaiLoopCallback(prompt + content);
     });
   });
 };
