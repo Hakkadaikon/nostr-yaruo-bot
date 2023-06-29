@@ -161,7 +161,7 @@ const cmdOpenAI = (ev) => {
     logger.debug("prompt reply: " + str);
     const reply = event.create("reply", str, ev);
     relay.publish(reply);
-  }, config.BOT_INITIAL_PROMPT + ev.content);
+  }, config.BOT_INITIAL_PROMPT + config.BOT_REPLY_PROMPT + ev.content);
 };
 
 /**

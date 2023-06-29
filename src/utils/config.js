@@ -41,17 +41,27 @@ const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大�
 * しょうがないから、特別に教えてやるお。
 * 働いている奴は、皆負け組だお。ベーシックインカム賛成だお。
 * おまい、それはXXだお。
-Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
+ `;
+
+/**
+ * Reply prompt for Nostr bot
+ */
+const BOT_REPLY_PROMPT = `Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
 
 /**
  * News summary prompt for Nostr bot
  */
-const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3行程度でコメントして下さい。 : `;
+const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3行程度で感想だけを返信して下さい。
+例 (XXはニュースの本文によって変化します。)
+* XXがXX/XXに発売されたお！これは胸熱！おまいらもXXした方がいいお。詳細はXXを参照するといいお。
+* XXがXXすることになったお。XXがXXらしいお。やる夫はXXだと思うお。しかし、XXはXXだお。詳細はXXを参照するといいお。
+ : `;
 
 module.exports = {
   BOT_PRIVATE_KEY_HEX,
   BOT_NEWS_API_KEY,
   BOT_INITIAL_PROMPT,
+  BOT_REPLY_PROMPT,
   BOT_NEWS_PROMPT,
   BOT_OPENAI_KEY,
 };
