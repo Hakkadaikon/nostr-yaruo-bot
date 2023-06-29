@@ -1,5 +1,5 @@
-const logger = require("./utils/logger.js");
-const command = require("./commands/command.js");
+import * as logger from "./utils/logger.mjs";
+import * as command from "./commands/command.mjs";
 
 /**
  * @summary Main function.

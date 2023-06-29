@@ -1,7 +1,8 @@
-const nostrTool = require("nostr-tools");
-const time = require("../utils/time.js");
-const logger = require("../utils/logger.js");
-require("websocket-polyfill");
+import * as nostrTool from "nostr-tools";
+import { nip19 } from "nostr-tools";
+import * as time from "../utils/time.mjs";
+import * as logger from "../utils/logger.mjs";
+import "websocket-polyfill";
 
 /**
  * @summary Relay object.
@@ -18,15 +19,14 @@ let botPrivateKeyHex = null;
  */
 const getFilter = () => {
   const filters = [];
-
-  // 自分への返信
+  // Reply
   filters.push({
     "#p": [nostrTool.getPublicKey(botPrivateKeyHex)],
     kinds: [1],
     limit: 10,
   });
 
-  // 自分への@投稿
+  // mention (@)
   filters.push({
     "#t": [nostrTool.getPublicKey(botPrivateKeyHex)],
     kinds: [1],
@@ -50,14 +50,14 @@ const finalize = () => {
 /**
  * @summary Returns whether or not it has been initialized.
  */
-const isInit = () => {
+export function isInit() {
   return relay !== null;
-};
+}
 
 /**
  * @summary Initialize relay object.
  */
-const init = (relayUrl, prikey) => {
+export function init(relayUrl, prikey) {
   logger.debug("init start!");
 
   botPrivateKeyHex = prikey;
@@ -71,12 +71,12 @@ const init = (relayUrl, prikey) => {
 
   logger.debug("init success!");
   return true;
-};
+}
 
 /**
  * @summary Connect to relay.
  */
-const connect = async () => {
+export async function connect() {
   if (!isInit()) {
     logger.error("[connect] Relay is not initialized.");
     return false;
@@ -85,7 +85,7 @@ const connect = async () => {
   logger.debug("connect start!");
   await relay.connect();
   logger.info("[connect] Connected to relay.");
-};
+}
 
 /**
  * @summary Determine whether the event is a Reply target
@@ -101,6 +101,15 @@ const matchEvent = (ev) => {
 
       if (!time.passedReplyCoolTime(ev.pubkey)) {
         //logger.debug("Not passed reply cool time.");
+        return false;
+      }
+
+      const myPubKey = nip19.npubEncode(
+        nostrTool.getPublicKey(botPrivateKeyHex)
+      );
+
+      //logger.debug("myPubKey:" + myPubKey);
+      if (ev.content.indexOf("nostr:" + myPubKey) < 0) {
         return false;
       }
 
@@ -130,7 +139,7 @@ const matchEvent = (ev) => {
 /**
  * @summary Subscribe event from relay.
  */
-const subscribe = (callback) => {
+export function subscribe(callback) {
   if (!isInit()) {
     logger.error("[subscribe] Relay is not initialized.");
     return;
@@ -143,12 +152,12 @@ const subscribe = (callback) => {
       callback(ev);
     }
   });
-};
+}
 
 /**
  * @summary Publish event to relay.
  */
-const publish = (ev) => {
+export function publish(ev) {
   if (!isInit()) {
     logger.error("[publish] Relay is not initialized.");
     return;
@@ -162,12 +171,4 @@ const publish = (ev) => {
   pub.on("failed", () => {
     logger.info("[publish] Failed.");
   });
-};
-
-module.exports = {
-  isInit,
-  init,
-  connect,
-  subscribe,
-  publish,
-};
+}

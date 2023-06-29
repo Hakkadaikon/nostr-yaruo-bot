@@ -1,13 +1,11 @@
-const NewsAPI = require("newsapi");
-const config = require("../utils/config.js");
+import NewsAPI from "newsapi";
+import * as config from "../utils/config.mjs";
 
 /**
  * @summary Get game news from NewsAPI.
  */
-const getGameNews = (callback) => {
-  // NewsAPI
+export function getGameNews(callback) {
   const newsapi = new NewsAPI(config.BOT_NEWS_API_KEY);
-
   newsapi.v2
     .everything({
       q: "ゲーム",
@@ -17,8 +15,4 @@ const getGameNews = (callback) => {
       var news = response.articles;
       callback(news);
     });
-};
-
-module.exports = {
-  getGameNews,
-};
+}

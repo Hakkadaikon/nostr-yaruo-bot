@@ -1,34 +1,27 @@
 /**
  * @summary Log output for debugging
  */
-const debug = (msg) => {
+export const debug = (msg) => {
   console.log("debug: " + msg);
 };
 
 /**
  * @summary Log output for information
  */
-const info = (msg) => {
+export function info(msg) {
   console.log("info : " + msg);
-};
+}
 
 /**
  * @summary Log output for warnings
  */
-const warn = (msg) => {
+export function warn(msg) {
   console.warn("warn : " + msg);
-};
+}
 
 /**
  * @summary Log output for errors
  */
-const error = (msg) => {
+export function error(msg) {
   console.error("error: " + msg);
-};
-
-module.exports = {
-  debug,
-  info,
-  warn,
-  error,
-};
+}

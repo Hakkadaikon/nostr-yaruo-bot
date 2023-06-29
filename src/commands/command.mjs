@@ -1,11 +1,17 @@
-require("dotenv").config();
+//require("dotenv").config();
+import * as env from "dotenv";
+env.config();
 
-const logger = require("../utils/logger.js");
-const config = require("../utils/config.js");
-const openai = require("../actions/openai.js");
-const event = require("../actions/event.js");
-const relay = require("../actions/relay.js");
-const news = require("../actions/news.js");
+import * as logger from "../utils/logger.mjs";
+import * as config from "../utils/config.mjs";
+import * as openai from "../actions/openai.mjs";
+import * as event from "../actions/event.mjs";
+import * as relay from "../actions/relay.mjs";
+import * as news from "../actions/news.mjs";
+import * as cron from "node-cron";
+import axios from "axios";
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 
 /**
  * @summary Show help message
@@ -42,10 +48,6 @@ const cmdFav = (match, ev) => {
  * @summary Get news content from news URL
  */
 const getNewsContent = (newsurl, callback) => {
-  const axios = require("axios");
-  const { JSDOM } = require("jsdom");
-  const { Readability } = require("@mozilla/readability");
-
   axios
     .get(newsurl)
     .then(function (r2) {
@@ -88,6 +90,7 @@ const cmdNews = (callback) => {
     }
 
     let retlyCount = 0;
+    let latestNews = null;
     while (true) {
       const arrayMax = news.length - 1;
       const arrayMin = 0;
@@ -193,7 +196,7 @@ const callback = (ev) => {
 /**
  * @summary Perform relay connection processing and event initialization
  */
-const init = async () => {
+export async function init() {
   const relayUrl = "wss://relay-jp.nostr.wirednet.jp";
 
   // Initialize relay
@@ -210,7 +213,6 @@ const init = async () => {
   relay.publish(runPost);
 
   // Post a news review every 30 minutes
-  const cron = require("node-cron");
   cron.schedule("0,30 * * * *", () => cmdNewsPost());
 
   process.on("SIGINT", () => {
@@ -238,8 +240,4 @@ const init = async () => {
 
   // Post news review on startup
   cmdNewsPost();
-};
-
-module.exports = {
-  init,
-};
+}

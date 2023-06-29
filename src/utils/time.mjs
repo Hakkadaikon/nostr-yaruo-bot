@@ -1,9 +1,9 @@
 /**
  * @summary Get current unix time
  */
-const currUnixTime = () => {
+export function currUnixTime() {
   return Math.floor(Date.now() / 1000);
-};
+}
 
 /**
  * @summary Reply cool time duration
@@ -23,7 +23,7 @@ const initTime = currUnixTime();
 /**
  * @summary Check if the reply cool time has passed
  */
-const passedReplyCoolTime = (id) => {
+export function passedReplyCoolTime(id) {
   const now = currUnixTime();
   const lastReplyTime = lastReplyTimePerId.get(id);
   if (lastReplyTime === undefined) {
@@ -37,21 +37,14 @@ const passedReplyCoolTime = (id) => {
   }
 
   return false;
-};
+}
 
 /**
  * @summary Check if the event is new
  */
-const isNewEvent = (eventTime) => {
+export function isNewEvent(eventTime) {
   if (initTime > eventTime) {
     return false;
   }
   return true;
-};
-
-module.exports = {
-  initTime,
-  currUnixTime,
-  passedReplyCoolTime,
-  isNewEvent,
-};
+}

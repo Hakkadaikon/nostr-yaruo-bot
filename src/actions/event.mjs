@@ -1,7 +1,7 @@
-const nostrTool = require("nostr-tools");
-const time = require("../utils/time.js");
-const logger = require("../utils/logger.js");
-require("websocket-polyfill");
+import * as nostrTool from "nostr-tools";
+import * as time from "../utils/time.mjs";
+import * as logger from "../utils/logger.mjs";
+import "websocket-polyfill";
 
 /**
  * @summary Private key in hex string in nostr.
@@ -59,14 +59,14 @@ const reply = (content, targetEvent) => {
 /**
  * @summary Initialize event.
  */
-const init = (key) => {
+export function init(key) {
   privateKeyHex = key;
-};
+}
 
 /**
  * @summary Create event. kind is "post", "reaction", "reply".
  */
-const create = (kind, content, event = null) => {
+export function create(kind, content, event = null) {
   switch (kind) {
     case "post":
       return post(content);
@@ -84,9 +84,4 @@ const create = (kind, content, event = null) => {
       return reply(content, event);
   }
   return null;
-};
-
-module.exports = {
-  init,
-  create,
-};
+}

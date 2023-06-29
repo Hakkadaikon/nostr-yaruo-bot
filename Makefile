@@ -28,5 +28,5 @@ install:
 	yarn install
 
 run: 
-	node src/main.js
+	node src/main.mjs
 
