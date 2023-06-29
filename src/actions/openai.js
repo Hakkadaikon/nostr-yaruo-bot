@@ -7,7 +7,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 /**
- * @summary OpenAIのChatGPTを使って、promptに対する応答を返す
+ * @summary Send message to GPT-3.5
  */
 const send = async (callback, prompt) => {
   const completion = await openai.createChatCompletion({
@@ -18,14 +18,8 @@ const send = async (callback, prompt) => {
     max_tokens: 300,
   });
 
-  // 生成された応答文章をコールバックに渡す
   callback(completion.data.choices[0].message.content.trim());
 };
-
-// テスト用
-//send((str) => {
-//    console.log(str);
-//}, "ChatGPTについて教えてください。");
 
 module.exports = {
   send,

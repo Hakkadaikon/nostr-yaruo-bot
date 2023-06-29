@@ -4,17 +4,17 @@ const logger = require("../utils/logger.js");
 require("websocket-polyfill");
 
 /**
- * @summary リレーオブジェクト
+ * @summary Relay object.
  */
 let relay = null;
 
 /**
- * @summary BOTの秘密鍵
+ * @summary Private key in hex string in nostr.
  */
 let botPrivateKeyHex = null;
 
 /**
- * @summary 購読用のフィルターを取得
+ * @summary Get subscribe filter.
  */
 const getFilter = () => {
   const filters = [];
@@ -38,7 +38,7 @@ const getFilter = () => {
 };
 
 /**
- * @summary リレーオブジェクトの後始末処理
+ * @summary Finalize relay object.
  */
 const finalize = () => {
   if (relay) {
@@ -48,22 +48,20 @@ const finalize = () => {
 };
 
 /**
- * @summary リレーオブジェクトの初期化有無を確認
+ * @summary Returns whether or not it has been initialized.
  */
 const isInit = () => {
   return relay !== null;
 };
 
 /**
- * @summary リレーを初期化する
+ * @summary Initialize relay object.
  */
 const init = (relayUrl, prikey) => {
   logger.debug("init start!");
 
-  // 秘密鍵を退避
   botPrivateKeyHex = prikey;
 
-  // リレー初期化
   relay = nostrTool.relayInit(relayUrl);
   relay.on("error", (e) => {
     logger.error("Failed to init. : " + e);
@@ -76,7 +74,7 @@ const init = (relayUrl, prikey) => {
 };
 
 /**
- * @summary リレーに接続する
+ * @summary Connect to relay.
  */
 const connect = async () => {
   if (!isInit()) {
@@ -90,41 +88,35 @@ const connect = async () => {
 };
 
 /**
- * @summary 購読対象のイベントかどうかを判定する
+ * @summary Determine whether the event is a Reply target
  */
 const matchEvent = (ev) => {
   //logger.debug(JSON.stringify(ev));
   switch (ev.kind) {
-    case 1: // ポスト
-      // 対象イベントがbotの起動後より新しいイベントかどうか
+    case 1: // Post
       if (!time.isNewEvent(ev.created_at)) {
         //logger.debug("Not new event.");
         return false;
       }
 
-      // 対象先へのイベントの送信から一定時間経過しているかどうか
       if (!time.passedReplyCoolTime(ev.pubkey)) {
         //logger.debug("Not passed reply cool time.");
         return false;
       }
 
-      //logger.debug("pass.");
       return true;
-    case 7: // メンション
-      // 対象イベントがbotの起動後より新しいイベントかどうか
+    case 7: // Reaction
       if (!time.isNewEvent(ev.created_at)) {
         return false;
       }
 
-      // 対象先へのイベントの送信から一定時間経過しているかどうか
       if (!time.passedReplyCoolTime(ev.pubkey)) {
         return false;
       }
 
       return true;
 
-    case 3: // フォロー
-      // 対象イベントがbotの起動後より新しいイベントかどうか
+    case 3: // Follow
       if (!time.isNewEvent(ev.created_at)) {
         return false;
       }
@@ -136,7 +128,7 @@ const matchEvent = (ev) => {
 };
 
 /**
- * @summary リレーからイベントを購読する
+ * @summary Subscribe event from relay.
  */
 const subscribe = (callback) => {
   if (!isInit()) {
@@ -154,7 +146,7 @@ const subscribe = (callback) => {
 };
 
 /**
- * @summary イベントを配信する
+ * @summary Publish event to relay.
  */
 const publish = (ev) => {
   if (!isInit()) {

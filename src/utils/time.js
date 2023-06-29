@@ -1,27 +1,27 @@
 /**
- * @summary 現在のUNIX時間を取得する
+ * @summary Get current unix time
  */
 const currUnixTime = () => {
   return Math.floor(Date.now() / 1000);
 };
 
 /**
- * @summary 返信のクールタイム
+ * @summary Reply cool time duration
  */
 const COOL_TIME_DUR_SEC = 10;
 
 /**
- * @summary 最後に返信した時間
+ * @summary Last reply time per id(pubkey)
  */
 const lastReplyTimePerId = new Map();
 
 /**
- * @summary BOTの起動時間
+ * @summary Unix time at bot startup
  */
 const initTime = currUnixTime();
 
 /**
- * @summary 返信してから一定時間超えたかを確認する
+ * @summary Check if the reply cool time has passed
  */
 const passedReplyCoolTime = (id) => {
   const now = currUnixTime();
@@ -40,7 +40,7 @@ const passedReplyCoolTime = (id) => {
 };
 
 /**
- * @summary 対象のイベントがbotの起動後より新しいイベントかどうかを判定する
+ * @summary Check if the event is new
  */
 const isNewEvent = (eventTime) => {
   if (initTime > eventTime) {

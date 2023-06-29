@@ -8,7 +8,7 @@ const relay = require("../actions/relay.js");
 const news = require("../actions/news.js");
 
 /**
- * @summary 使い方を表示する
+ * @summary Show help message
  */
 const cmdHelp = (match, ev) => {
   var str = "";
@@ -24,9 +24,9 @@ const cmdHelp = (match, ev) => {
 };
 
 /**
- * @summary 指定された投稿にリプライ + メンションする
+ * @summary Fav to the specified post
  */
-const cmdFab = (match, ev) => {
+const cmdFav = (match, ev) => {
   const reply = event.create(
     "reply",
     "おまいはよく頑張ったお。特別に、やる夫がいいねしてやるお。",
@@ -39,7 +39,7 @@ const cmdFab = (match, ev) => {
 };
 
 /**
- * @summary ニュースの内容を取得する
+ * @summary Get news content from news URL
  */
 const getNewsContent = (newsurl, callback) => {
   const axios = require("axios");
@@ -73,12 +73,12 @@ const getNewsContent = (newsurl, callback) => {
 };
 
 /**
- * @summary 一度配信したニュース情報
+ * @summary Array of news URLs once posted
  */
 const newsList = [];
 
 /**
- * @summary ニュースの内容を取得する
+ * @summary Post a news review
  */
 const cmdNews = (callback) => {
   news.getGameNews((news) => {
@@ -100,14 +100,11 @@ const cmdNews = (callback) => {
         continue;
       }
 
-      // 一度配信したニュース情報を記録
       newsList.push(latestNews["url"]);
       break;
     }
 
-    // 記事の内容を取得
     getNewsContent(latestNews["url"], (content) => {
-      // 記事の内容から要約を取得
       openai.send((str) => {
         const responseStr =
           str +
@@ -127,6 +124,9 @@ const cmdNews = (callback) => {
   });
 };
 
+/**
+ * @summary Post a news review
+ */
 const cmdNewsPost = () => {
   cmdNews((str) => {
     const post = event.create("post", str);
@@ -135,7 +135,7 @@ const cmdNewsPost = () => {
 };
 
 /**
- * @summary 最新ニュースの感想を返信する
+ * @summary Reply a news review
  */
 const cmdNewsReply = (match, ev) => {
   cmdNews((str) => {
@@ -145,16 +145,16 @@ const cmdNewsReply = (match, ev) => {
 };
 
 /**
- * @summary コマンドのregexとcallbackのMap
+ * @summary Command Regex and callback correspondence table
  */
 const routeMap = [
   [/(help|ヘルプ|へるぷ)/g, true, cmdHelp],
-  [/(褒め|ほめ|ホメ|称え|たたえ)(ろ|て)/g, true, cmdFab],
+  [/(褒め|ほめ|ホメ|称え|たたえ)(ろ|て)/g, true, cmdFav],
   [/(ニュース|News|NEWS|news)/g, true, cmdNewsReply],
 ];
 
 /**
- * @summary GPT-3.5による応答を返信する
+ * @summary Reply the response by OpenAI
  */
 const cmdOpenAI = (ev) => {
   openai.send((str) => {
@@ -165,7 +165,7 @@ const cmdOpenAI = (ev) => {
 };
 
 /**
- * @summary 購読時のコールバック
+ * @summary Subscribe callback
  */
 const callback = (ev) => {
   logger.debug("[subscribe]");
@@ -185,35 +185,31 @@ const callback = (ev) => {
         }
       }
 
-      // コマンドにマッチしなかった場合は、GPT-3.5による応答を返信する
       cmdOpenAI(ev);
       break;
   }
 };
 
 /**
- * @summary リレーとイベントを設定
+ * @summary Perform relay connection processing and event initialization
  */
 const init = async () => {
-  // 接続するリレーサーバのURL
   const relayUrl = "wss://relay-jp.nostr.wirednet.jp";
 
-  // リレー初期化
+  // Initialize relay
   if (!relay.init(relayUrl, config.BOT_PRIVATE_KEY_HEX)) {
     return;
   }
 
-  // リレー接続
   await relay.connect();
 
-  // イベントに秘密鍵を設定
   event.init(config.BOT_PRIVATE_KEY_HEX);
 
-  // 起動メッセージ投稿
+  // Post a startup message
   const runPost = event.create("post", "おっきしたお。");
   relay.publish(runPost);
 
-  // 定期的なニュース投稿
+  // Post a news review every 30 minutes
   const cron = require("node-cron");
   cron.schedule("0,30 * * * *", () => cmdNewsPost());
 
@@ -238,10 +234,9 @@ const init = async () => {
     process.exit(0);
   });
 
-  // 購読処理
   relay.subscribe(callback);
 
-  // 起動時にニュース投稿
+  // Post news review on startup
   cmdNewsPost();
 };
 

@@ -1,11 +1,13 @@
 const NewsAPI = require("newsapi");
 const config = require("../utils/config.js");
 
+/**
+ * @summary Get game news from NewsAPI.
+ */
 const getGameNews = (callback) => {
   // NewsAPI
   const newsapi = new NewsAPI(config.BOT_NEWS_API_KEY);
 
-  // キーワード検索
   newsapi.v2
     .everything({
       q: "ゲーム",

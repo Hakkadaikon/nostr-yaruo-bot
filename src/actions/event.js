@@ -4,12 +4,12 @@ const logger = require("../utils/logger.js");
 require("websocket-polyfill");
 
 /**
- * @summary BOTの秘密鍵
+ * @summary Private key in hex string in nostr.
  */
 let privateKeyHex = null;
 
 /**
- * @summary ポストを行う
+ * @summary Return post event.
  */
 const post = (content) => {
   const postEvent = {
@@ -19,12 +19,11 @@ const post = (content) => {
     created_at: time.currUnixTime(),
   };
 
-  // イベントID(ハッシュ値)計算・署名
   return nostrTool.finishEvent(postEvent, privateKeyHex);
 };
 
 /**
- * @summary リアクションを行う
+ * @summary Return reaction event.
  */
 const reaction = (content, targetEvent) => {
   const reactionEvent = {
@@ -37,12 +36,11 @@ const reaction = (content, targetEvent) => {
     created_at: time.currUnixTime(),
   };
 
-  // イベントID(ハッシュ値)計算・署名
   return nostrTool.finishEvent(reactionEvent, privateKeyHex);
 };
 
 /**
- * @summary 特定のイベントに対して返信する
+ * @summary Return reply event.
  */
 const reply = (content, targetEvent) => {
   const replyEvent = {
@@ -55,19 +53,18 @@ const reply = (content, targetEvent) => {
     created_at: time.currUnixTime(),
   };
 
-  // イベントID(ハッシュ値)計算・署名
   return nostrTool.finishEvent(replyEvent, privateKeyHex);
 };
 
 /**
- * @summary イベントを初期化する
+ * @summary Initialize event.
  */
 const init = (key) => {
   privateKeyHex = key;
 };
 
 /**
- * @summary イベントを作成する
+ * @summary Create event. kind is "post", "reaction", "reply".
  */
 const create = (kind, content, event = null) => {
   switch (kind) {

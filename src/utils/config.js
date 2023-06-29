@@ -1,23 +1,23 @@
-// .envファイルの読み込み
+// Reading environment variables from .env file
 require("dotenv").config();
 
 /**
- * @summary OpenAI APIにアクセスするためのキー
+ * @summary Access token for OpenAI API
  */
 const BOT_OPENAI_KEY = process.env.OPENAI_API_KEY;
 
 /**
- * @summary Nostrに投稿するための、BOTの秘密鍵
+ * @summary Private key for Nostr bot
  */
 const BOT_PRIVATE_KEY_HEX = process.env.BOT_PRIVATE_KEY_HEX;
 
 /**
- * @summary ニュースを投稿するためのAPIキー
+ * @summary Access token for News API
  */
 const BOT_NEWS_API_KEY = process.env.BOT_NEWS_API_KEY;
 
 /**
- * @summary ChatGPT APIに与える、BOTの初期プロンプト
+ * @summary Initial prompt for Nostr bot
  */
 const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大好きなニート、やる夫のロールプレイを行います。
 以下の制約条件を厳密に守ってロールプレイして下さい。
@@ -44,7 +44,7 @@ const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2chが大�
 Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
 
 /**
- * ニュース要約用のプロンプト
+ * News summary prompt for Nostr bot
  */
 const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3行程度でコメントして下さい。 : `;
 
