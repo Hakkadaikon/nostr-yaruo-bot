@@ -30,3 +30,5 @@ install:
 run: 
 	node src/main.mjs
 
+run_background:
+	nohup node src/main.mjs &
