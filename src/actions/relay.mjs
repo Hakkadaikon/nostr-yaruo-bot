@@ -64,7 +64,7 @@ export function init(relayUrl, prikey) {
 
   relay = nostrTool.relayInit(relayUrl);
   relay.on("error", (e) => {
-    logger.error("Failed to init. : " + e);
+    logger.error("Failed to init. : " + e.message);
     finalize();
     return false;
   });
