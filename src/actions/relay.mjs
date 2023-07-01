@@ -63,8 +63,8 @@ export function init(relayUrl, prikey) {
   botPrivateKeyHex = prikey;
 
   relay = nostrTool.relayInit(relayUrl);
-  relay.on("error", (e) => {
-    logger.error("Failed to init. : " + e.message);
+  relay.on("error", () => {
+    logger.error("Failed to connect. ");
     finalize();
     return false;
   });
@@ -168,7 +168,7 @@ export function publish(ev) {
     logger.info("[publish] Success! : ");
     logger.info(JSON.stringify(ev));
   });
-  pub.on("failed", () => {
-    logger.info("[publish] Failed.");
+  pub.on("failed", (reason) => {
+    logger.info(`[publish] Failed. : ${reason}`);
   });
 }
