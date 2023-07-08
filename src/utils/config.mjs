@@ -58,3 +58,6 @@ export const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3�
 * XXがXX/XXに発売されたお！これは胸熱！おまいらもXXした方がいいお。詳細はXXを参照するといいお。
 * XXがXXすることになったお。XXがXXらしいお。やる夫はXXだと思うお。しかし、XXはXXだお。詳細はXXを参照するといいお。
  : `;
+
+export const BOT_OPENAI_ERROR_PROMPT =
+  "OpenAIから応答がないお。エラーメッセージを貼るお。";
