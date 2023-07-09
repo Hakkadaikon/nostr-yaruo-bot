@@ -1,4 +1,3 @@
-//require("dotenv").config();
 import * as env from "dotenv";
 env.config();
 
@@ -9,9 +8,6 @@ import * as event from "../actions/event.mjs";
 import * as relay from "../actions/relay.mjs";
 import * as news from "../actions/news.mjs";
 import * as cron from "node-cron";
-import axios from "axios";
-import { JSDOM } from "jsdom";
-import { Readability } from "@mozilla/readability";
 
 /**
  * @summary Show help message
@@ -45,110 +41,65 @@ const cmdFav = (match, ev) => {
 };
 
 /**
- * @summary Get news content from news URL
- */
-const getNewsContent = (newsurl, callback) => {
-  axios
-    .get(newsurl)
-    .then(function (r2) {
-      let dom = new JSDOM(r2.data, { url: newsurl });
-      let article = new Readability(dom.window.document).parse();
-      //logger.debug("document:" + JSON.stringify(dom.window.document));
-      //logger.debug("article:" + article.textContent);
-      callback(article.textContent);
-    })
-    .catch(function (error) {
-      logger.error("Failed news summary error.");
-      if (error.response) {
-        logger.error("Error response.");
-        logger.error("- data   :" + error.response.data);
-        logger.error("- status :" + error.response.status);
-        logger.error("- headers:" + error.response.headers);
-      } else if (error.request) {
-        logger.error("Not response.");
-        logger.error("- request:" + error.request);
-      } else {
-        logger.error("Other error.");
-        logger.error("- message:" + error.message);
-      }
-    });
-};
-
-/**
  * @summary Array of news URLs once posted
  */
-const newsList = [];
+const publishedNewsUrls = [];
 
 /**
  * @summary Post a news review
  */
-const cmdNews = (callback) => {
-  news.getGameNews((news) => {
-    const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
-    if (news.length == 0) {
+const cmdNews = async (callback) => {
+  const postCallback = (thoughts, news, callback) => {
+    const outStr = (label, value) => {
+      return label + " :\n" + value + "\n";
+    };
+
+    const responseStr =
+      thoughts +
+      "\n\n" +
+      outStr(config.NEWS_TITLE_LABEL, news["title"]) +
+      outStr(config.NEWS_DESCRIPTION_LABEL, news["description"]) +
+      outStr(config.NEWS_URL_LABEL, news["url"]);
+
+    callback(responseStr);
+  };
+
+  await news.getGameNews(async (newsList) => {
+    if (newsList.length == 0) {
       return;
     }
 
-    let retlyCount = 0;
-    let latestNews = null;
-    while (true) {
-      const arrayMax = news.length - 1;
-      const arrayMin = 0;
-      const arrayNo =
-        Math.floor(Math.random() * (arrayMax + 1 - arrayMin)) + arrayMin;
-      latestNews = news[arrayNo];
+    let retryCount = 0;
+    let completed = false;
+    while (!completed && retryCount < 5) {
+      logger.debug("retryCount:" + retryCount);
+      retryCount++;
 
-      if (newsList.includes(latestNews["url"]) && retlyCount < 10) {
-        retlyCount++;
-        continue;
-      }
+      const selectedNews = news.selectNewsRetry(newsList, publishedNewsUrls);
+      publishedNewsUrls.push(selectedNews["url"]);
+      logger.debug("selectedNews:" + JSON.stringify(selectedNews));
 
-      newsList.push(latestNews["url"]);
-      break;
-    }
+      const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
 
-    getNewsContent(latestNews["url"], (content) => {
-      const openaiCallback = (str) => {
-        const titleLabel = "タイトル";
-        const descriptionLabel = "概要";
-        const urlLabel = "URL";
-        const outStr = (label, value) => {
-          return label + " :\n" + value + "\n";
-        };
-
-        const responseStr =
-          str +
-          "\n\n" +
-          outStr(titleLabel, latestNews["title"]) +
-          outStr(descriptionLabel, latestNews["description"]) +
-          outStr(urlLabel, latestNews["url"]);
-
-        callback(responseStr);
-      };
-
-      const openaiCheckCallback = (str) => {
-        const ngWords = ["XX/XX", "XXがXX", "XXを参照"];
-        for (let i = 0; i < ngWords.length; i++) {
-          if (str.includes(ngWords[i])) {
-            return false;
-          }
+      await news.getNewsContent(selectedNews["url"], async (content) => {
+        logger.debug("get news content");
+        if (!news.validateNewsContent(content)) {
+          logger.warn("content contains ng words.");
+          return;
         }
 
-        openaiCallback(str);
-        return true;
-      };
-
-      let retryCount = 0;
-      const openaiLoopCallback = (prompt) => {
-        openai.send((str) => {
-          logger.debug("retry count : " + retryCount);
-          if (!openaiCheckCallback(str) && retryCount++ < 3) {
-            openaiLoopCallback(str);
+        await openai.send((thoughts) => {
+          if (!news.validateNewsThoughts(thoughts)) {
+            logger.warn("thoughts contains ng words.");
+            return;
           }
-        }, prompt);
-      };
-      openaiLoopCallback(prompt + content);
-    });
+
+          postCallback(thoughts, selectedNews, callback);
+          logger.info("Send completed!");
+          completed = true;
+        }, prompt + content);
+      });
+    }
   });
 };
 

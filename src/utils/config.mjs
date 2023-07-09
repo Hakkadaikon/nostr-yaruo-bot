@@ -46,12 +46,12 @@ export const BOT_INITIAL_PROMPT = `あなたはChatBotとして、31才男の2ch
  `;
 
 /**
- * Reply prompt for Nostr bot
+ * @summary Reply prompt for Nostr bot
  */
 export const BOT_REPLY_PROMPT = `Userが次の様にやる夫に質問するので、あなたはやる夫としての回答だけ返信してください。： `;
 
 /**
- * News summary prompt for Nostr bot
+ * @summary News summary prompt for Nostr bot
  */
 export const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3行程度で感想だけを返信して下さい。
 例 (XXはニュースの本文によって変化します。)
@@ -59,4 +59,32 @@ export const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3�
 * XXがXXすることになったお。XXがXXらしいお。やる夫はXXだと思うお。しかし、XXはXXだお。詳細はXXを参照するといいお。
  : `;
 
+/**
+ * @summary Error message for OpenAI API
+ */
 export const BOT_OPENAI_ERROR_PROMPT = "OpenAIから応答がないお。";
+
+/**
+ * @summary Title label for news post
+ */
+export const NEWS_TITLE_LABEL = "タイトル";
+
+/**
+ * @summary Description label for news post
+ */
+export const NEWS_DESCRIPTION_LABEL = "概要";
+
+/**
+ * @summary URL label for news post
+ */
+export const NEWS_URL_LABEL = "URL";
+
+/**
+ * @summary NG Words for news content
+ */
+export const NEWS_CONTENT_NG_WORDS = ["婚活"];
+
+/**
+ * @summary NG Words for news thoughts
+ */
+export const NEWS_THOUGHTS_NG_WORDS = ["XX/XX", "XXがXX", "XXを参照"];
