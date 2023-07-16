@@ -29,9 +29,8 @@ format:
 install:
 	yarn install
 	sudo apt install libsystemd-dev
-	npm install --save sd-notify
 	sudo rm -f /etc/systemd/system/yaruo.service
-	sed -e "/\[Service\]/a ExecStart=/bin/bash -c \"cd $(CUR_DIR); make run_background\"" \
+	sed -e "/\[Service\]/a ExecStart=/bin/bash -c \"cd $(CUR_DIR) && make run\"" \
 	service/yaruo.service.template > service/yaruo.service
 	sudo ln -s $(CUR_DIR)/service/yaruo.service /etc/systemd/system/yaruo.service
 	systemctl enable yaruo.service

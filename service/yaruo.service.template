@@ -3,7 +3,6 @@ Description=Yaruo service
 After=apache2.service
 
 [Service]
-Type=notify
 ExecStop=/bin/kill -WINCH ${MAINPID}
 
 [Install]

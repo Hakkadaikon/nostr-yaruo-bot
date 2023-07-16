@@ -1,6 +1,5 @@
 import * as env from "dotenv";
 import * as cron from "node-cron";
-import * as notify from "sd-notify";
 import * as logger from "../utils/logger.mjs";
 import * as config from "../utils/config.mjs";
 import * as openai from "../actions/openai.mjs";
@@ -216,7 +215,4 @@ export async function init() {
 
   // Post news review on startup
   cmdNewsPost();
-
-  // Notify systemd that the service is ready
-  notify.ready();
 }
