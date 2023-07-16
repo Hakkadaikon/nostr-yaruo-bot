@@ -1,7 +1,9 @@
 .PHONY: init install run clean format lint
 .DEFAULT_GOAL := run
+CUR_DIR:=`pwd`
 
 clean:
+	sudo rm -f /etc/systemd/system/yaruo.service
 	yarn cache clean --force
 	rm -rf node_modules
 	rm -rf package-lock.json
@@ -26,6 +28,19 @@ format:
 
 install:
 	yarn install
+	sudo apt install libsystemd-dev
+	npm install --save sd-notify
+	sudo rm -f /etc/systemd/system/yaruo.service
+	sed -e "/\[Service\]/a ExecStart=/bin/bash -c \"cd $(CUR_DIR); make run_background\"" \
+	service/yaruo.service.template > service/yaruo.service
+	sudo ln -s $(CUR_DIR)/service/yaruo.service /etc/systemd/system/yaruo.service
+	systemctl enable yaruo.service
+
+start:
+	sudo systemctl start yaruo.service
+
+stop:
+	sudo systemctl stop yaruo.service
 
 run: 
 	node src/main.mjs
