@@ -4,6 +4,7 @@ import axios from "axios";
 import { JSDOM } from "jsdom";
 import { Readability } from "@mozilla/readability";
 import * as config from "../utils/config.mjs";
+import * as logger from "../utils/logger.mjs";
 env.config();
 
 /**
