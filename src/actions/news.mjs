@@ -82,6 +82,11 @@ export async function getNewsContent(newsurl, callback) {
 
   let dom = new JSDOM(response.data, { url: newsurl });
   let article = new Readability(dom.window.document).parse();
+
+  if (article == null || article.textContent == null) {
+    logger.error("article is null.");
+    return;
+  }
   //logger.debug("document:" + JSON.stringify(dom.window.document));
   //logger.debug("article:" + article.textContent);
   await callback(article.textContent);
