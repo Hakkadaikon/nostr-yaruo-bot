@@ -66,19 +66,12 @@ export async function getNewsContent(newsurl, callback) {
   const response = await axios.get(newsurl).catch(function (error) {
     logger.error("Failed news summary error.");
     logger.error(JSON.stringify(error));
-    if (error.response) {
-      logger.error("Error response.");
-      logger.error("- data   :" + error.response.data);
-      logger.error("- status :" + error.response.status);
-      logger.error("- headers:" + error.response.headers);
-    } else if (error.request) {
-      logger.error("Not response.");
-      logger.error("- request:" + error.request);
-    } else {
-      logger.error("Other error.");
-      logger.error("- message:" + error.message);
-    }
   });
+
+  if (response == null) {
+    logger.error("Failed news summary response is null.");
+    return;
+  }
 
   let dom = new JSDOM(response.data, { url: newsurl });
   let article = new Readability(dom.window.document).parse();
