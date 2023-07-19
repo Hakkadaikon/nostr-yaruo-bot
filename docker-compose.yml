@@ -1,0 +1,15 @@
+version: "3"
+services:
+  bot:
+    build:
+      context: .
+    #   restart: always
+    volumes:
+      - ".:/opt"
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
+    user: root
+    command: >
+      /bin/bash -c "cd /opt && make install"
+      /bin/bash -c "cd /opt && make run_background"
