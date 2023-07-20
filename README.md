@@ -19,7 +19,7 @@ BOT_NEWS_API_KEY="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 3. Start the bot.
 
 ```
-$ make run
+$ docker-compose up -d
 ```
 
 ## Author

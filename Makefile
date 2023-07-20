@@ -1,8 +1,7 @@
-.PHONY: init install run clean format lint
+.PHONY: init install run clean format lint run_background up down
 .DEFAULT_GOAL := run
 
 clean:
-	sudo rm -f /etc/systemd/system/yaruo.service
 	yarn cache clean --force
 	rm -rf node_modules
 	rm -rf package-lock.json
@@ -16,8 +15,6 @@ init: clean
 	sed -e "2i \ \ \"private\": true," package.json > package2.json
 	mv package2.json package.json
 	yarn run eslint --init
-	# sed -e "/\"scripts\"/a \    \"build\": \"echo build\"," package.json > package2.json
-	# mv package2.json package.json
 
 lint:
 	yarn run eslint
@@ -27,12 +24,6 @@ format:
 
 install:
 	yarn install
-
-start:
-	sudo systemctl start yaruo.service
-
-stop:
-	sudo systemctl stop yaruo.service
 
 run: 
 	node src/main.mjs

@@ -1,9 +1,0 @@
-[Unit]
-Description=Yaruo service
-After=apache2.service
-
-[Service]
-ExecStop=/bin/kill -WINCH ${MAINPID}
-
-[Install]
-WantedBy=multi-user.target
