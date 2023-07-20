@@ -1,27 +1,12 @@
-FROM ubuntu:20.04
+FROM node:20
 
-# Set non interactive mode
-ENV DEBIAN_FRONTEND=noninteractive
+# Copy source files
+WORKDIR /app
+COPY package.json package-lock.json yarn.lock /app/
+COPY src /app/src
 
-# Install curl
-RUN apt update
-RUN apt upgrade
-RUN apt install -y curl
+# Install libraries
+RUN yarn install
 
-# Install gnupg
-RUN apt install -y gnupg
-
-# Add yarn gpg key
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt update
-
-# Install node
-RUN apt install -y npm
-
-# Install node.js
-RUN npm install -g n
-RUN n 20.1.0
-
-# Install yarn
-RUN apt install -y yarn
+# Start yaruo
+CMD ["node", "src/main.mjs"]
