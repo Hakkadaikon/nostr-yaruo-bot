@@ -15,6 +15,11 @@ let relay = null;
 let botPrivateKeyHex = null;
 
 /**
+ * @summary Relay URL.
+ */
+let relayUrl = null;
+
+/**
  * @summary Get subscribe filter.
  */
 const getFilter = () => {
@@ -74,6 +79,28 @@ export function init(relayUrl, prikey) {
 }
 
 /**
+ * @summary Reconnect to relay.
+ */
+export async function reconnect() {
+  if (!isInit()) {
+    logger.debug("[reconnect] reconnect start!");
+    relay = nostrTool.relayInit(relayUrl);
+    relay.on("error", () => {
+      logger.error("Failed to reconnect. (relayInit)");
+      finalize();
+      return false;
+    });
+  }
+
+  if (!(await relay.connect())) {
+    return false;
+  }
+
+  logger.info("[reconnect] Reconnected to relay.");
+  return true;
+}
+
+/**
  * @summary Connect to relay.
  */
 export async function connect() {
@@ -85,6 +112,7 @@ export async function connect() {
   logger.debug("connect start!");
   await relay.connect();
   logger.info("[connect] Connected to relay.");
+  return true;
 }
 
 /**
@@ -160,7 +188,9 @@ export function subscribe(callback) {
 export function publish(ev) {
   if (!isInit()) {
     logger.error("[publish] Relay is not initialized.");
-    return;
+    if (!relay.reconnect()) {
+      return;
+    }
   }
 
   const pub = relay.publish(ev);
