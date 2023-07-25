@@ -26,14 +26,6 @@ export async function send(callback, prompt) {
   } catch (e) {
     logger.error(e);
     str += config.BOT_OPENAI_ERROR_PROMPT;
-    if (e.response) {
-      // str += "\n";
-      // str += "\n" + error.response.status;
-      // str += "\n" + error.response.data;
-    } else {
-      str += "\n";
-      str += "\n" + error.message;
-    }
   }
 
   callback(str);
