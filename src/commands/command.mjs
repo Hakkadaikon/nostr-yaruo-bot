@@ -169,9 +169,9 @@ const callback = (ev) => {
 };
 
 /**
- * @summary Perform relay connection processing and event initialization
+ * @summary Connect to relay.
  */
-export async function init() {
+export async function connect() {
   const relayUrl = "wss://relay-jp.nostr.wirednet.jp";
 
   // Initialize relay
@@ -180,6 +180,13 @@ export async function init() {
   }
 
   await relay.connect();
+}
+
+/**
+ * @summary Perform relay connection processing and event initialization
+ */
+export async function init() {
+  await connect();
 
   event.init(config.BOT_PRIVATE_KEY_HEX);
 
