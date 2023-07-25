@@ -18,7 +18,7 @@ const cmdHelp = (match, ev) => {
   str +=
     "(褒め|ほめ|ホメ|称え|たたえ)(ろ|て) : やる夫が特別にいいねしてやるお。\n";
   str += "[/(ニュース|News|NEWS|news) : ゲーム関連のニュースを表示するお。\n";
-  str += "それ以外のメッセージ : GPT-3.5による応答を返信するお。\n";
+  str += "それ以外のメッセージ : GPT-4による応答を返信するお。\n";
 
   const reply = event.create("reply", str, ev);
   relay.publish(reply);

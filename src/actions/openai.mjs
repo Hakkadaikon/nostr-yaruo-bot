@@ -8,16 +8,15 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 /**
- * @summary Send message to GPT-3.5
+ * @summary Send message to GPT-4
  */
 export async function send(callback, prompt) {
   let str = "";
 
   try {
     const completion = await openai.createChatCompletion({
-      model: "gpt-3.5-turbo-16k-0613",
-      //model: "gpt-3.5-turbo",
-      //model: "gpt-4",
+      //model: "gpt-3.5-turbo-16k-0613",
+      model: "gpt-4",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 150,
     });
