@@ -68,10 +68,16 @@ export function init(relayUrl, prikey) {
   botPrivateKeyHex = prikey;
 
   relay = nostrTool.relayInit(relayUrl);
-  relay.on("error", () => {
-    logger.error("Failed to connect. ");
-    finalize();
-    return false;
+  relay.on('connect', () => {
+    logger.info(`Relay connected to ${relay.url}`);
+  });
+  relay.on('error', () => {
+    logger.error(`Relay encountered error!! ${relay.url}`);
+    process.exit(1);
+  });
+  relay.on('disconnect', () => {
+    logger.info(`Relay is disconnected. ${relay.url}`);
+    process.exit(1);
   });
 
   logger.debug("init success!");
