@@ -76,7 +76,7 @@ export function init(relayUrl, prikey) {
     process.exit(1);
   });
   relay.on("disconnect", () => {
-    logger.info(`Relay is disconnected. ${relay.url}`);
+    logger.warn(`Relay is disconnected. ${relay.url}`);
     process.exit(1);
   });
 
