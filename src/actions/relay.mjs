@@ -68,41 +68,19 @@ export function init(relayUrl, prikey) {
   botPrivateKeyHex = prikey;
 
   relay = nostrTool.relayInit(relayUrl);
-  relay.on('connect', () => {
+  relay.on("connect", () => {
     logger.info(`Relay connected to ${relay.url}`);
   });
-  relay.on('error', () => {
+  relay.on("error", () => {
     logger.error(`Relay encountered error!! ${relay.url}`);
     process.exit(1);
   });
-  relay.on('disconnect', () => {
+  relay.on("disconnect", () => {
     logger.info(`Relay is disconnected. ${relay.url}`);
     process.exit(1);
   });
 
   logger.debug("init success!");
-  return true;
-}
-
-/**
- * @summary Reconnect to relay.
- */
-export async function reconnect() {
-  if (!isInit()) {
-    logger.debug("[reconnect] reconnect start!");
-    relay = nostrTool.relayInit(relayUrl);
-    relay.on("error", () => {
-      logger.error("Failed to reconnect. (relayInit)");
-      finalize();
-      return false;
-    });
-  }
-
-  if (!(await relay.connect())) {
-    return false;
-  }
-
-  logger.info("[reconnect] Reconnected to relay.");
   return true;
 }
 
@@ -194,9 +172,7 @@ export function subscribe(callback) {
 export function publish(ev) {
   if (!isInit()) {
     logger.error("[publish] Relay is not initialized.");
-    if (!relay.reconnect()) {
-      return;
-    }
+    return;
   }
 
   const pub = relay.publish(ev);
