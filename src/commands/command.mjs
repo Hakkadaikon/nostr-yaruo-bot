@@ -175,11 +175,7 @@ export async function connect() {
   const relayUrl = "wss://relay-jp.nostr.wirednet.jp";
 
   // Initialize relay
-  if (!relay.init(relayUrl, config.BOT_PRIVATE_KEY_HEX)) {
-    return;
-  }
-
-  await relay.connect();
+  relay.init(relayUrl, config.BOT_PRIVATE_KEY_HEX);
 }
 
 /**
@@ -208,14 +204,14 @@ export async function init() {
     logger.info("SIGHUP");
     const exitPost = event.create("post", "寝るお。(SIGHUP)");
     relay.publish(exitPost);
-    process.exit(0);
+    process.exit(1);
   });
 
   process.on("SIGTERM", () => {
     logger.info("SIGTERM");
     const exitPost = event.create("post", "寝るお。(SIGTERM)");
     relay.publish(exitPost);
-    process.exit(0);
+    process.exit(1);
   });
 
   relay.subscribe(callback);

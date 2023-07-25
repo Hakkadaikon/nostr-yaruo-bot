@@ -62,12 +62,9 @@ export function isInit() {
 /**
  * @summary Initialize relay object.
  */
-export function init(relayUrl, prikey) {
-  logger.debug("init start!");
-
-  botPrivateKeyHex = prikey;
-
-  relay = nostrTool.relayInit(relayUrl);
+export async function connect() {
+  logger.debug("[connect] start!");
+  relay = await nostrTool.relayInit(relayUrl);
   relay.on("connect", () => {
     logger.info(`Relay connected to ${relay.url}`);
   });
@@ -80,23 +77,19 @@ export function init(relayUrl, prikey) {
     process.exit(1);
   });
 
-  logger.debug("init success!");
-  return true;
+  await relay.connect();
+  logger.debug("[connect] success!");
 }
 
 /**
- * @summary Connect to relay.
+ * @summary Initialize relay object.
  */
-export async function connect() {
-  if (!isInit()) {
-    logger.error("[connect] Relay is not initialized.");
-    return false;
-  }
-
-  logger.debug("connect start!");
-  await relay.connect();
-  logger.info("[connect] Connected to relay.");
-  return true;
+export async function init(url, priKeyHex) {
+  logger.debug("[init] start!");
+  botPrivateKeyHex = priKeyHex;
+  relayUrl = url;
+  await connect();
+  logger.debug("[init] success!");
 }
 
 /**
@@ -154,7 +147,7 @@ const matchEvent = (ev) => {
 export function subscribe(callback) {
   if (!isInit()) {
     logger.error("[subscribe] Relay is not initialized.");
-    return;
+    process.exit(1);
   }
 
   // 購読開始
@@ -170,10 +163,8 @@ export function subscribe(callback) {
  * @summary Publish event to relay.
  */
 export function publish(ev) {
-  if (!isInit()) {
-    logger.error("[publish] Relay is not initialized.");
-    return;
-  }
+  logger.debug("[publish] start!");
+  connect();
 
   const pub = relay.publish(ev);
   pub.on("ok", () => {
@@ -182,5 +173,7 @@ export function publish(ev) {
   });
   pub.on("failed", (reason) => {
     logger.info(`[publish] Failed. : ${reason}`);
+    process.exit(1);
   });
+  logger.debug("[publish] success!");
 }
