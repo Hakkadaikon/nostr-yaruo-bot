@@ -80,6 +80,11 @@ export const NEWS_DESCRIPTION_LABEL = "概要";
 export const NEWS_URL_LABEL = "URL";
 
 /**
+ * @summary News content count label
+ */
+export const NEWS_CONTENT_COUNT_LABEL = "ニュース本文の文字数";
+
+/**
  * @summary NG Words for news content
  */
 export const NEWS_CONTENT_NG_WORDS = ["婚活"];
