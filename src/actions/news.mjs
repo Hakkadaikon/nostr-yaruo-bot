@@ -84,3 +84,21 @@ export async function getNewsContent(newsurl, callback) {
   //logger.debug("article:" + article.textContent);
   await callback(article.textContent);
 }
+
+export function postCallback(thoughts, news, content, callback) {
+  const outStr = (label, value) => {
+    return label + " :\n" + value + "\n";
+  };
+
+  const contentCount = content.length;
+
+  const responseStr =
+    thoughts +
+    "\n\n" +
+    outStr(config.NEWS_TITLE_LABEL, news["title"]) +
+    outStr(config.NEWS_DESCRIPTION_LABEL, news["description"]) +
+    outStr(config.NEWS_URL_LABEL, news["url"]) +
+    outStr(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString());
+
+  callback(responseStr);
+}

@@ -48,24 +48,6 @@ const publishedNewsUrls = [];
  * @summary Post a news review
  */
 const cmdNews = async (callback) => {
-  const postCallback = (thoughts, news, content, callback) => {
-    const outStr = (label, value) => {
-      return label + " :\n" + value + "\n";
-    };
-
-    const contentCount = content.length;
-
-    const responseStr =
-      thoughts +
-      "\n\n" +
-      outStr(config.NEWS_TITLE_LABEL, news["title"]) +
-      outStr(config.NEWS_DESCRIPTION_LABEL, news["description"]) +
-      outStr(config.NEWS_URL_LABEL, news["url"]) +
-      outStr(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString());
-
-    callback(responseStr);
-  };
-
   await news.getGameNews(async (newsList) => {
     if (newsList.length == 0) {
       return;
@@ -97,7 +79,7 @@ const cmdNews = async (callback) => {
             return;
           }
 
-          postCallback(thoughts, selectedNews, content, callback);
+          news.postCallback(thoughts, selectedNews, content, callback);
           logger.info("Send completed!");
           completed = true;
         }, prompt + content);
