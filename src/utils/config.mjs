@@ -59,6 +59,8 @@ export const BOT_NEWS_PROMPT = `次のニュースを、やる夫の視点で3�
 * XXがXXすることになったお。XXがXXらしいお。やる夫はXXだと思うお。しかし、XXはXXだお。詳細はXXを参照するといいお。
  : `;
 
+export const BOT_NEWS_SUMMARY_PROMPT = `次のニュースを、300字程度で要約して下さい。: `;
+
 /**
  * @summary Error message for OpenAI API
  */
@@ -82,14 +84,19 @@ export const NEWS_URL_LABEL = "URL";
 /**
  * @summary News content count label
  */
-export const NEWS_CONTENT_COUNT_LABEL = "ニュース本文の文字数";
+export const NEWS_CONTENT_COUNT_LABEL = "ニュース本文";
+
+/**
+ * @summary News summary content count label
+ */
+export const NEWS_SUMMARY_CONTENT_COUNT_LABEL = "ニュース要約";
+
+/**
+ * @summary News thoughts content count label
+ */
+export const NEWS_THOUGHTS_CONTENT_COUNT_LABEL = "ニュース感想";
 
 /**
  * @summary NG Words for news content
  */
 export const NEWS_CONTENT_NG_WORDS = ["婚活"];
-
-/**
- * @summary NG Words for news thoughts
- */
-export const NEWS_THOUGHTS_NG_WORDS = ["XX/XX", "XXがXX", "XXを参照"];

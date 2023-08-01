@@ -44,6 +44,28 @@ const cmdFav = (match, ev) => {
  */
 const publishedNewsUrls = [];
 
+const newsSummaryCallback = async (callback, content) => {
+  const prompt = config.BOT_NEWS_SUMMARY_PROMPT + content;
+  await openai.send(
+    async (summary) => {
+      await callback(summary);
+    },
+    prompt,
+    "gpt-3.5-turbo-16k-0613"
+  );
+};
+
+const newsThoughtCallback = async (callback, summary) => {
+  const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT + summary;
+  await openai.send(
+    async (thought) => {
+      await callback(thought);
+    },
+    prompt,
+    "gpt-4"
+  );
+};
+
 /**
  * @summary Post a news review
  */
@@ -53,38 +75,31 @@ const cmdNews = async (callback) => {
       return;
     }
 
-    let retryCount = 0;
-    let completed = false;
-    while (!completed && retryCount < 5) {
-      logger.debug("retryCount:" + retryCount);
-      retryCount++;
+    const selectedNews = await news.selectNewsRetry(
+      newsList,
+      publishedNewsUrls
+    );
+    publishedNewsUrls.push(selectedNews["url"]);
+    logger.debug("selectedNews:" + JSON.stringify(selectedNews));
 
-      const selectedNews = news.selectNewsRetry(newsList, publishedNewsUrls);
-      publishedNewsUrls.push(selectedNews["url"]);
-      logger.debug("selectedNews:" + JSON.stringify(selectedNews));
+    await news.getNewsContent(selectedNews["url"], async (content) => {
+      if (!news.validateNewsContent(content)) {
+        logger.warn("content contains ng words.");
+        return;
+      }
 
-      const prompt = config.BOT_INITIAL_PROMPT + config.BOT_NEWS_PROMPT;
-
-      await news.getNewsContent(selectedNews["url"], async (content) => {
-        logger.debug("get news content");
-        if (!news.validateNewsContent(content)) {
-          logger.warn("content contains ng words.");
-          return;
-        }
-
-        //postCallback("test", selectedNews, content, callback);
-        await openai.send((thoughts) => {
-          if (!news.validateNewsThoughts(thoughts)) {
-            logger.warn("thoughts contains ng words.");
-            return;
-          }
-
-          news.postCallback(thoughts, selectedNews, content, callback);
-          logger.info("Send completed!");
-          completed = true;
-        }, prompt + content);
-      });
-    }
+      await newsSummaryCallback(async (summary) => {
+        await newsThoughtCallback(async (thought) => {
+          await news.postCallback(
+            selectedNews,
+            content,
+            summary,
+            thought,
+            callback
+          );
+        }, summary);
+      }, content);
+    });
   });
 };
 
@@ -121,11 +136,15 @@ const routeMap = [
  * @summary Reply the response by OpenAI
  */
 const cmdOpenAI = (ev) => {
-  openai.send((str) => {
-    logger.debug("prompt reply: " + str);
-    const reply = event.create("reply", str, ev);
-    relay.publish(reply);
-  }, config.BOT_INITIAL_PROMPT + config.BOT_REPLY_PROMPT + ev.content);
+  openai.send(
+    (str) => {
+      logger.debug("prompt reply: " + str);
+      const reply = event.create("reply", str, ev);
+      relay.publish(reply);
+    },
+    config.BOT_INITIAL_PROMPT + config.BOT_REPLY_PROMPT + ev.content,
+    "GPT-4"
+  );
 };
 
 /**

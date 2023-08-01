@@ -17,9 +17,8 @@ export async function getGameNews(callback) {
       q: "ゲーム",
       sortBy: "publishedAt",
     })
-    .then((response) => {
-      var news = response.articles;
-      callback(news);
+    .then(async (response) => {
+      await callback(response.articles);
     });
 }
 
@@ -49,10 +48,6 @@ function validateStr(str, ngWords) {
   }
 
   return true;
-}
-
-export function validateNewsThoughts(thoughts) {
-  return validateStr(thoughts, config.NEWS_THOUGHTS_NG_WORDS);
 }
 
 export function validateNewsContent(content) {
@@ -85,20 +80,27 @@ export async function getNewsContent(newsurl, callback) {
   await callback(article.textContent);
 }
 
-export function postCallback(thoughts, news, content, callback) {
+export async function postCallback(news, content, summary, thought, callback) {
   const outStr = (label, value) => {
     return label + " :\n" + value + "\n";
   };
+  const outStr2 = (label, value) => {
+    return label + " : " + value + "\n";
+  };
 
   const contentCount = content.length;
+  const summaryCount = summary.length;
+  const thoughtCount = thought.length;
 
   const responseStr =
-    thoughts +
+    thought +
     "\n\n" +
     outStr(config.NEWS_TITLE_LABEL, news["title"]) +
     outStr(config.NEWS_DESCRIPTION_LABEL, news["description"]) +
     outStr(config.NEWS_URL_LABEL, news["url"]) +
-    outStr(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString());
+    outStr2(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString()) +
+    outStr2(config.NEWS_SUMMARY_CONTENT_COUNT_LABEL, summaryCount.toString()) +
+    outStr2(config.NEWS_THOUGHTS_CONTENT_COUNT_LABEL, thoughtCount.toString());
 
-  callback(responseStr);
+  await callback(responseStr);
 }
