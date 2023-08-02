@@ -83,10 +83,10 @@ const cmdNews = async (callback) => {
     logger.debug("selectedNews:" + JSON.stringify(selectedNews));
 
     await news.getNewsContent(selectedNews["url"], async (content) => {
-      if (!news.validateNewsContent(content)) {
-        logger.warn("content contains ng words.");
-        return;
-      }
+      //if (!news.validateNewsContent(content)) {
+      //  logger.warn("content contains ng words.");
+      //  return;
+      //}
 
       await newsSummaryCallback(async (summary) => {
         await newsThoughtCallback(async (thought) => {
