@@ -143,7 +143,7 @@ const cmdOpenAI = (ev) => {
       relay.publish(reply);
     },
     config.BOT_INITIAL_PROMPT + config.BOT_REPLY_PROMPT + ev.content,
-    "GPT-4"
+    "gpt-4"
   );
 };
 
