@@ -195,8 +195,8 @@ export async function init() {
   const runPost = event.create("post", "おっきしたお。");
   relay.publish(runPost);
 
-  // Post a news review every 30 minutes
-  cron.schedule("0,30 * * * *", () => cmdNewsPost());
+  // Post a news review every 6 hours
+  cron.schedule("0 */6 * * *", () => cmdNewsPost());
 
   process.on("SIGINT", () => {
     logger.info("SIGINT");
