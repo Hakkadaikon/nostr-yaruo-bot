@@ -55,7 +55,7 @@ export const BOT_REPLY_PROMPT = `Userが次の様にやる夫に質問するの�
  * @summary News summary prompt for Nostr bot
  */
 export const BOT_NEWS_PROMPT = `
-Please reply with only your thoughts on the next news in about 300 characters from "やる夫" point of view.
+Please reply with only your thoughts on the next news in about 200 characters from "やる夫" point of view.
 Examples (XXはニュースの本文によって変化します。)
 * XXがXX/XXに発売されたお！これは胸熱！おまいらもXXした方がいいお。詳細はXXを参照するといいお。
 * XXがXXすることになったお。XXがXXらしいお。やる夫はXXだと思うお。しかし、XXはXXだお。詳細はXXを参照するといいお。
