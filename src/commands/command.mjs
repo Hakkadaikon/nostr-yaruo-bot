@@ -18,6 +18,8 @@ const cmdHelp = (match, ev) => {
   str +=
     "(褒め|ほめ|ホメ|称え|たたえ)(ろ|て) : やる夫が特別にいいねしてやるお。\n";
   str += "[/(ニュース|News|NEWS|news) : ゲーム関連のニュースを表示するお。\n";
+  str +=
+    "[/(ascii|アスキー|asciiart|アスキーアート) : アスキーアートを表示するお。\n";
   str += "それ以外のメッセージ : GPT-4による応答を返信するお。\n";
 
   const reply = event.create("reply", str, ev);
@@ -124,12 +126,28 @@ const cmdNewsReply = (match, ev) => {
 };
 
 /**
+ * @summary Command create to ascii art
+ */
+const cmdAsciiArt = (match, ev) => {
+  openai.send(
+    (str) => {
+      logger.debug("prompt reply: " + str);
+      const reply = event.create("reply", str, ev);
+      relay.publish(reply);
+    },
+    config.BOT_ASCII_ART_PROMPT,
+    "gpt-4"
+  );
+};
+
+/**
  * @summary Command Regex and callback correspondence table
  */
 const routeMap = [
   [/(help|ヘルプ|へるぷ)/g, true, cmdHelp],
   [/(褒め|ほめ|ホメ|称え|たたえ)(ろ|て)/g, true, cmdFav],
   [/(ニュース|News|NEWS|news)/g, true, cmdNewsReply],
+  [/(ascii|アスキー|アスキーアート|asciiart)/g, true, cmdAsciiArt],
 ];
 
 /**
