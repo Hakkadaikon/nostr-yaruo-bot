@@ -214,7 +214,7 @@ export async function init() {
   relay.publish(runPost);
 
   // Post a news review every 6 hours
-  cron.schedule("0 */6 * * *", () => cmdNewsPost());
+  // cron.schedule("0 */6 * * *", () => cmdNewsPost());
 
   process.on("SIGINT", () => {
     logger.info("SIGINT");
@@ -240,5 +240,5 @@ export async function init() {
   relay.subscribe(callback);
 
   // Post news review on startup
-  cmdNewsPost();
+  //cmdNewsPost();
 }
