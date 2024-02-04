@@ -210,7 +210,7 @@ export async function init() {
   event.init(config.BOT_PRIVATE_KEY_HEX);
 
   // Post a startup message
-  const runPost = event.create("post", "おっきしたお。");
+  // const runPost = event.create("post", "おっきしたお。");
   relay.publish(runPost);
 
   // Post a news review every 6 hours
