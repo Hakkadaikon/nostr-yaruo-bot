@@ -82,10 +82,7 @@ export async function getNewsContent(newsurl, callback) {
 
 export async function postCallback(news, content, summary, thought, callback) {
   const outStr = (label, value) => {
-    return label + " :\n" + value + "\n";
-  };
-  const outStr2 = (label, value) => {
-    return label + " : " + value + "\n";
+    return label + " :" + value + "\n";
   };
 
   const contentCount = content.length;
@@ -95,12 +92,13 @@ export async function postCallback(news, content, summary, thought, callback) {
   const responseStr =
     thought +
     "\n\n" +
-    outStr(config.NEWS_TITLE_LABEL, news["title"]) +
-    outStr(config.NEWS_DESCRIPTION_LABEL, news["description"]) +
-    outStr(config.NEWS_URL_LABEL, news["url"]) +
-    outStr2(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString()) +
-    outStr2(config.NEWS_SUMMARY_CONTENT_COUNT_LABEL, summaryCount.toString()) +
-    outStr2(config.NEWS_THOUGHTS_CONTENT_COUNT_LABEL, thoughtCount.toString());
+    news["title"] +
+    "\n" +
+    news["url"] +
+    "\n" +
+    outStr(config.NEWS_CONTENT_COUNT_LABEL, contentCount.toString()) +
+    outStr(config.NEWS_SUMMARY_CONTENT_COUNT_LABEL, summaryCount.toString()) +
+    outStr(config.NEWS_THOUGHTS_CONTENT_COUNT_LABEL, thoughtCount.toString());
 
   await callback(responseStr);
 }

@@ -72,21 +72,6 @@ export const BOT_NEWS_SUMMARY_PROMPT = `次のニュースを、300字程度で�
 export const BOT_OPENAI_ERROR_PROMPT = "OpenAIから応答がないお。";
 
 /**
- * @summary Title label for news post
- */
-export const NEWS_TITLE_LABEL = "タイトル";
-
-/**
- * @summary Description label for news post
- */
-export const NEWS_DESCRIPTION_LABEL = "概要";
-
-/**
- * @summary URL label for news post
- */
-export const NEWS_URL_LABEL = "URL";
-
-/**
  * @summary News content count label
  */
 export const NEWS_CONTENT_COUNT_LABEL = "ニュース本文";
