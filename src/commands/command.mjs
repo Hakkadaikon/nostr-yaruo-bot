@@ -53,7 +53,7 @@ const newsSummaryCallback = async (callback, content) => {
       await callback(summary);
     },
     prompt,
-    "gpt-3.5-turbo-16k-0613"
+    "gpt-4o"
   );
 };
 
@@ -64,7 +64,7 @@ const newsThoughtCallback = async (callback, summary) => {
       await callback(thought);
     },
     prompt,
-    "gpt-3.5-turbo-0125"
+    "gpt-4.5-preview"
   );
 };
 
@@ -161,7 +161,7 @@ const cmdOpenAI = (ev) => {
       relay.publish(reply);
     },
     config.BOT_INITIAL_PROMPT + config.BOT_REPLY_PROMPT + ev.content,
-    "gpt-4-0125-preview"
+    "gpt-4.5-preview"
   );
 };
 
@@ -214,7 +214,7 @@ export async function init() {
   // relay.publish(runPost);
 
   // Post a news review every 2 hours
-  cron.schedule("0 */2 * * *", () => cmdNewsPost());
+  //cron.schedule("0 */2 * * *", () => cmdNewsPost());
 
   process.on("SIGINT", () => {
     logger.info("SIGINT");
@@ -240,5 +240,5 @@ export async function init() {
   relay.subscribe(callback);
 
   // Post news review on startup
-  // cmdNewsPost();
+  //cmdNewsPost();
 }
